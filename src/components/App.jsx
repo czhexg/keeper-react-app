@@ -1,14 +1,34 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 
 import Header from "./Header";
 import Footer from "./Footer";
 import ShowNotes from "./ShowNotes";
 import CreateArea from "./CreateArea";
 
-import startingNotes from "../notes";
+// import startingNotes from "../notes";
 
 function App() {
-    const [notes, setNotes] = useState(startingNotes);
+    const [notes, setNotes] = useState({});
+
+    useEffect(() => {
+        console.log("useEffect running");
+        fetch("/home")
+            .then((res) => {
+                console.log(res);
+                res.json();
+            })
+            .then((notes) => {
+                setNotes(notes);
+                console.log("1");
+                console.log(notes);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
+    // console.log("2");
+    // console.log(notes);
 
     function addNote(title, content) {
         const newNote = {
