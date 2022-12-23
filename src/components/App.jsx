@@ -8,11 +8,11 @@ import CreateArea from "./CreateArea";
 // import startingNotes from "../notes";
 
 function App() {
-    const [notes, setNotes] = useState({});
+    const [notes, setNotes] = useState([]);
 
     useEffect(() => {
         console.log("useEffect running");
-        fetch("/home")
+        fetch("http://localhost:9000/home")
             .then((res) => {
                 console.log(res);
                 res.json();
