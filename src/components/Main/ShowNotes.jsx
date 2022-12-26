@@ -6,7 +6,6 @@ function ShowNotes(props) {
         return (
             <Note
                 key={noteProps.key}
-                id={noteProps.key}
                 title={noteProps.title}
                 content={noteProps.content}
                 deleteNote={() => {

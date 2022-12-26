@@ -1,11 +1,27 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+var cors = require("cors");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
 const port = 9000;
 
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded());
+app.use(
+    session({
+        secret: "session secret",
+        resave: false,
+        saveUninitialized: false,
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.set("strictQuery", false);
 
@@ -19,14 +35,34 @@ const connectDB = async () => {
     }
 };
 
-app.route("/").get((req, res) => {
-    // res.send("Good");
+const noteSchema = new mongoose.Schema({
+    key: Number,
+    title: String,
+    content: String,
+});
+
+const userSchema = new mongoose.Schema({
+    username: String,
+    password: String,
+    notes: [noteSchema],
+});
+
+userSchema.plugin(passportLocalMongoose);
+
+const User = mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.route("/api/test").get((req, res) => {
     res.json([
         {
             key: 1,
             title: "Delegation",
             content:
-                "Q. How many programmers does it take to change a light bulb? A. None - It's a hardware problem",
+                "Q. How many programmers does it take to change a light bulb? A. None – It’s a hardware problem",
         },
         {
             key: 2,
@@ -49,15 +85,26 @@ app.route("/").get((req, res) => {
     ]);
 });
 
-app.route("/:user/notes").get((req, res) => {
-    res.json([
-        {
-            key: 1,
-            title: "Delegation",
-            content:
-                "Q. How many programmers does it take to change a light bulb? A. None - It's a hardware problem",
-        },
-    ]);
+app.route("/api/:user/notes").get((req, res) => {
+    User.findOne({ username: req.params.user }, (err, foundUser) => {
+        res.json(foundUser.notes);
+    });
+});
+
+app.route("/api/register").post((req, res) => {
+    console.log(req.body.username);
+    console.log(req.body.password);
+    const user = new User({
+        username: req.body.username,
+        password: req.body.password,
+    });
+    user.save((err) => {
+        if (err) {
+            console.log(err);
+        }
+        res.status(200);
+        res.json();
+    });
 });
 
 connectDB().then(() => {
