@@ -1,16 +1,30 @@
+import Cookies from "js-cookie";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CreateArea from "./CreateArea";
 import ShowNotes from "./ShowNotes";
 
 function Main() {
     const [notes, setNotes] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("/api/test")
-            .then((res) => {
-                return res.json();
+        const username = Cookies.get("username");
+        // fetch("/api/test")
+        fetch(`/api/${username}/notes`)
+            .then((response) => {
+                // console.log(res);
+                if (response.status === 403) {
+                    navigate("/login");
+                }
+                try {
+                    return response.json();
+                } catch (error) {
+                    return [];
+                }
             })
             .then((fetchNotes) => {
+                console.log(fetchNotes);
                 setNotes(fetchNotes);
             })
             .catch((err) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function Register() {
     const [username, setUsername] = useState();
@@ -19,11 +20,23 @@ function Register() {
                 password: password,
             }),
         })
-            .then((data) => {
-                console.log(data);
-                return data.json();
+            .then((response) => {
+                // console.log(response);
+                return response.json();
             })
-            .then(navigate("/main"));
+            .then(() => {
+                Cookies.set("username", username);
+                navigate("/main");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        // .then((data) => {
+        //     // console.log(data);
+        //     return data.json();
+        // })
+        // .then(navigate("/main"));
     }
 
     return (
