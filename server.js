@@ -29,7 +29,6 @@ app.use(passport.session());
 mongoose.set("strictQuery", false);
 
 const noteSchema = new mongoose.Schema({
-    key: Number,
     title: String,
     content: String,
 });
@@ -59,84 +58,83 @@ const connectDB = async () => {
     }
 };
 
-app.route("/api/test").get((req, res) => {
+app.route("/api/:user/notes").get((req, res) => {
     res.set(
         "Cache-Control",
         "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
     );
-    // console.log(req.isAuthenticated());
     if (req.isAuthenticated()) {
-        res.status(200).json([
-            {
-                key: 1,
-                title: "Delegation",
-                content:
-                    "Q. How many programmers does it take to change a light bulb? A. None – It’s a hardware problem",
-            },
-            {
-                key: 2,
-                title: "Loops",
-                content:
-                    "How to keep a programmer in the shower forever. Show him the shampoo bottle instructions: Lather. Rinse. Repeat.",
-            },
-            {
-                key: 3,
-                title: "Arrays",
-                content:
-                    "Q. Why did the programmer quit his job? A. Because he didn't get arrays.",
-            },
-            {
-                key: 4,
-                title: "Hardware vs. Software",
-                content:
-                    "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software.",
-            },
-        ]);
+        // console.log("get notes api");
+        User.findOne({ username: req.params.user }, (err, foundUser) => {
+            res.json(foundUser.notes);
+        });
     } else {
         res.status(403).json("forbidden");
     }
 });
 
-app.route("/api/:user/notes")
-    .get((req, res) => {
-        res.set(
-            "Cache-Control",
-            "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
-        );
-        if (req.isAuthenticated()) {
-            console.log("get notes api");
-            User.findOne({ username: req.params.user }, (err, foundUser) => {
-                res.json(foundUser.notes);
-            });
-        } else {
-            res.status(403).json("forbidden");
-        }
-    })
-    .patch((req, res) => {
-        res.set(
-            "Cache-Control",
-            "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
-        );
-        if (req.isAuthenticated()) {
-            console.log("patch notes api");
-            console.log(req.body.newNote);
-            if (JSON.stringify(req.body.newNote) !== "{}") {
-                User.updateOne(
-                    { username: req.params.user },
-                    { $push: { notes: req.body.newNote } },
-                    (err) => {
-                        if (!err) {
-                            res.json("Successfully updated article.");
-                        } else {
-                            res.json(err);
-                        }
+app.route("/api/:user/notes/addnote").patch((req, res) => {
+    res.set(
+        "Cache-Control",
+        "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
+    );
+    if (req.isAuthenticated()) {
+        if (JSON.stringify(req.body.newNote) !== "{}") {
+            User.findOneAndUpdate(
+                { username: req.params.user },
+                { $push: { notes: req.body.newNote } },
+                {
+                    new: true,
+                },
+                (err, updatedNotes) => {
+                    if (!err) {
+                        res.json(updatedNotes.notes);
+                    } else {
+                        res.json(err);
                     }
-                );
-            }
+                }
+            );
         } else {
-            res.status(403).json("forbidden");
+            // console.log("newNote empty");
+            res.status(204).end();
         }
-    });
+    } else {
+        res.status(403).json("forbidden");
+    }
+});
+
+app.route("/api/:user/notes/deletenote").patch((req, res) => {
+    res.set(
+        "Cache-Control",
+        "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
+    );
+    if (req.isAuthenticated()) {
+        // console.log(JSON.stringify(req.body.noteID));
+        if (JSON.stringify(req.body.noteID)) {
+            // console.log(req.body.noteID);
+            User.findOneAndUpdate(
+                { username: req.params.user },
+                { $pull: { notes: { _id: req.body.noteID } } },
+                {
+                    new: true,
+                },
+                (err, updatedNotes) => {
+                    if (!err) {
+                        // console.log(updatedNotes.notes);
+                        res.json(updatedNotes.notes);
+                    } else {
+                        res.json(err);
+                    }
+                }
+            );
+        } else {
+            // console.log("noteID empty");
+            res.status(204).end();
+        }
+    } else {
+        res.status(403).json("forbidden");
+    }
+});
 
 app.route("/api/register").post((req, res) => {
     User.register(
@@ -145,7 +143,7 @@ app.route("/api/register").post((req, res) => {
         (err, user) => {
             if (err) {
                 console.log(err);
-                res.json();
+                res.end();
             } else {
                 passport.authenticate("local")(req, res, () => {
                     res.status(200).json("registered");
@@ -164,21 +162,22 @@ app.route("/api/login").post((req, res) => {
         req.login(user, (err) => {
             if (err) {
                 console.log(err);
-                res.json();
+                res.end();
             } else {
-                res.json();
+                res.status(200).json("logged in");
             }
         });
     });
 });
 
-app.get("/logout", (req, res) => {
+app.get("/api/logout", (req, res) => {
     req.logout((err) => {
+        // console.log("logout");
         if (err) {
             console.log(err);
-            res.json();
+            res.end();
         } else {
-            res.json();
+            res.status(200).json("logged out");
         }
     });
 });

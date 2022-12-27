@@ -5,16 +5,15 @@ import CreateArea from "./CreateArea";
 import ShowNotes from "./ShowNotes";
 
 function Main() {
+    const [deleteNoteID, setDeleteNoteID] = useState();
     const [newNote, setNewNote] = useState({});
     const [notes, setNotes] = useState([]);
     const navigate = useNavigate();
     const username = Cookies.get("username");
 
     useEffect(() => {
-        // fetch("/api/test")
         fetch(`/api/${username}/notes`)
             .then((response) => {
-                // console.log(res);
                 if (response.status === 403) {
                     navigate("/login");
                 }
@@ -25,7 +24,7 @@ function Main() {
                 }
             })
             .then((fetchNotes) => {
-                // console.log(fetchNotes);
+                console.log(fetchNotes);
                 setNotes(fetchNotes);
             })
             .catch((err) => {
@@ -34,7 +33,7 @@ function Main() {
     }, []);
 
     useEffect(() => {
-        fetch(`/api/${username}/notes`, {
+        fetch(`/api/${username}/notes/addnote`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -44,39 +43,59 @@ function Main() {
             }),
         })
             .then((response) => {
-                console.log("fetch put");
                 if (response.status === 403) {
                     navigate("/login");
                 }
                 return response.json();
+            })
+            .then((newNotes) => {
+                if (newNotes) {
+                    setNotes(newNotes);
+                }
             })
             .catch((err) => {
                 console.log(err);
             });
     }, [newNote]);
 
+    useEffect(() => {
+        fetch(`/api/${username}/notes/deletenote`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                noteID: deleteNoteID,
+            }),
+        })
+            .then((response) => {
+                if (response.status === 403) {
+                    navigate("/login");
+                }
+                return response.json();
+            })
+            .then((newNotes) => {
+                if (newNotes) {
+                    setNotes(newNotes);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [deleteNoteID]);
+
     function addNote(title, content) {
-        console.log("addnote func");
-        setNewNote({
-            key: notes.length + 1,
+        const tempNote = {
             title: title,
             content: content,
-        });
-        setNotes((prevNotes) => {
-            return [...prevNotes, newNote];
-        });
-        console.log(notes);
+        };
+        setNewNote(tempNote);
     }
 
     function deleteNote(key) {
-        setNotes((prevNotes) => {
-            return prevNotes.filter((note) => {
-                return note.key !== key;
-            });
-        });
+        setDeleteNoteID(key);
     }
 
-    console.log(notes);
     return (
         <div>
             <CreateArea addNote={addNote} />

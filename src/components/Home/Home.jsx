@@ -5,8 +5,8 @@ function Home() {
     return (
         <div>
             <p>This is an attempt at a Google Keep Clone</p>
-            <Link to="/Login">Login</Link>
-            <Link to="/Register">Register</Link>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
         </div>
     );
 }
