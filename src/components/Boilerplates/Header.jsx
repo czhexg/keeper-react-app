@@ -4,6 +4,7 @@ function Header() {
     return (
         <header>
             <h1>Keeper</h1>
+            {/* <button>Logout</button> */}
         </header>
     );
 }

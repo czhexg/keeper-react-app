@@ -97,20 +97,46 @@ app.route("/api/test").get((req, res) => {
     }
 });
 
-app.route("/api/:user/notes").get((req, res) => {
-    res.set(
-        "Cache-Control",
-        "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
-    );
-    if (req.isAuthenticated()) {
-        console.log(req.params.user);
-        User.findOne({ username: req.params.user }, (err, foundUser) => {
-            res.json(foundUser.notes);
-        });
-    } else {
-        res.status(403).json("forbidden");
-    }
-});
+app.route("/api/:user/notes")
+    .get((req, res) => {
+        res.set(
+            "Cache-Control",
+            "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
+        );
+        if (req.isAuthenticated()) {
+            console.log("get notes api");
+            User.findOne({ username: req.params.user }, (err, foundUser) => {
+                res.json(foundUser.notes);
+            });
+        } else {
+            res.status(403).json("forbidden");
+        }
+    })
+    .patch((req, res) => {
+        res.set(
+            "Cache-Control",
+            "no-cache, private, no-store, must-revalidate, max-stal e=0, post-check=0, pre-check=0"
+        );
+        if (req.isAuthenticated()) {
+            console.log("patch notes api");
+            console.log(req.body.newNote);
+            if (JSON.stringify(req.body.newNote) !== "{}") {
+                User.updateOne(
+                    { username: req.params.user },
+                    { $push: { notes: req.body.newNote } },
+                    (err) => {
+                        if (!err) {
+                            res.json("Successfully updated article.");
+                        } else {
+                            res.json(err);
+                        }
+                    }
+                );
+            }
+        } else {
+            res.status(403).json("forbidden");
+        }
+    });
 
 app.route("/api/register").post((req, res) => {
     User.register(

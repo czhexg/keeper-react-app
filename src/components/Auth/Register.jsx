@@ -21,7 +21,6 @@ function Register() {
             }),
         })
             .then((response) => {
-                // console.log(response);
                 return response.json();
             })
             .then(() => {
@@ -31,12 +30,6 @@ function Register() {
             .catch((err) => {
                 console.log(err);
             });
-
-        // .then((data) => {
-        //     // console.log(data);
-        //     return data.json();
-        // })
-        // .then(navigate("/main"));
     }
 
     return (

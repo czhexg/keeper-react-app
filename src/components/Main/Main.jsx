@@ -1,15 +1,16 @@
 import Cookies from "js-cookie";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import CreateArea from "./CreateArea";
 import ShowNotes from "./ShowNotes";
 
 function Main() {
+    const [newNote, setNewNote] = useState({});
     const [notes, setNotes] = useState([]);
     const navigate = useNavigate();
+    const username = Cookies.get("username");
 
     useEffect(() => {
-        const username = Cookies.get("username");
         // fetch("/api/test")
         fetch(`/api/${username}/notes`)
             .then((response) => {
@@ -24,7 +25,7 @@ function Main() {
                 }
             })
             .then((fetchNotes) => {
-                console.log(fetchNotes);
+                // console.log(fetchNotes);
                 setNotes(fetchNotes);
             })
             .catch((err) => {
@@ -32,15 +33,39 @@ function Main() {
             });
     }, []);
 
+    useEffect(() => {
+        fetch(`/api/${username}/notes`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                newNote: newNote,
+            }),
+        })
+            .then((response) => {
+                console.log("fetch put");
+                if (response.status === 403) {
+                    navigate("/login");
+                }
+                return response.json();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [newNote]);
+
     function addNote(title, content) {
-        const newNote = {
+        console.log("addnote func");
+        setNewNote({
             key: notes.length + 1,
             title: title,
             content: content,
-        };
+        });
         setNotes((prevNotes) => {
             return [...prevNotes, newNote];
         });
+        console.log(notes);
     }
 
     function deleteNote(key) {
@@ -49,9 +74,9 @@ function Main() {
                 return note.key !== key;
             });
         });
-        // console.log(key);
     }
 
+    console.log(notes);
     return (
         <div>
             <CreateArea addNote={addNote} />
