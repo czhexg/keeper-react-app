@@ -1,8 +1,8 @@
 {
-  "name": "keeper-react-app",
-  "version": "0.1.0",
-  "private": true,
-  "proxy": "http://localhost:9000",
+  "name": "keeper-react-app-server",
+  "version": "1.0.0",
+  "description": "api server for keeper react app",
+  "main": "index.js",
   "dependencies": {
     "connect-mongo": "^4.6.0",
     "cors": "^2.8.5",
@@ -15,27 +15,8 @@
     "passport-local-mongoose": "^7.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "author": "Chan Zhe Xiang",
+  "license": "ISC"
 }
