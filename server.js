@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -13,7 +14,6 @@ const port = 9000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
-// app.set("trust proxy", 1);
 app.use(
     session({
         secret: "session secret",
@@ -182,6 +182,16 @@ app.get("/api/logout", (req, res) => {
             res.end();
         } else {
             res.status(200).json("logged out");
+        }
+    });
+});
+
+app.use(express.static(path.join(__dirname, "./build")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "./build/index.html"), (err) => {
+        if (err) {
+            res.status(500).send(err);
         }
     });
 });
