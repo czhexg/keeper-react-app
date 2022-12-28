@@ -58,6 +58,10 @@ const connectDB = async () => {
     }
 };
 
+app.route("/api/test").get((req, res) => {
+    res.send("test");
+});
+
 app.route("/api/:user/notes").get((req, res) => {
     res.set(
         "Cache-Control",
