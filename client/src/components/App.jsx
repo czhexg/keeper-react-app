@@ -9,7 +9,7 @@ import Main from "./Main/Main";
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/">
             <Routes>
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
