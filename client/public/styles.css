@@ -80,7 +80,7 @@ footer p {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 20%;
+    margin: 20vh;
 }
 
 .auth-page h1 {
