@@ -23,7 +23,9 @@ function Header() {
             <h1>
                 <Link to="/main">Keeper</Link>
             </h1>
-            <button onClick={logout}>Logout</button>
+            <button type="button" onClick={logout}>
+                Logout
+            </button>
         </header>
     );
 }

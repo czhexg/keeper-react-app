@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 function Login() {
@@ -33,9 +33,9 @@ function Login() {
     }
 
     return (
-        <div>
+        <div className="auth-page">
             <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={handleSubmit}>
                 <label htmlFor="username">Username: </label>
                 <input
                     type="text"
@@ -54,6 +54,9 @@ function Login() {
                 />
                 <button type="submit">Login</button>
             </form>
+            <p>
+                Don't have an account? <Link to="/register">Register here</Link>
+            </p>
         </div>
     );
 }

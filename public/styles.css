@@ -16,12 +16,24 @@ header {
     margin: auto -16px;
     padding: 16px 32px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+    display: flex;
 }
 
 header h1 {
     color: #fff;
     font-family: "McLaren", cursive;
     font-weight: 200;
+}
+
+header button {
+    color: #fff;
+    font-family: "McLaren", cursive;
+    font-weight: 200;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
 }
 
 footer {
@@ -36,6 +48,81 @@ footer {
 footer p {
     color: #ccc;
 }
+
+.home-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20% 0;
+}
+
+.home-body div {
+    padding: 5% 0;
+}
+
+.home-body div a {
+    padding: 0 10%;
+}
+
+.home-body div a:link,
+.home-body div a:visited {
+    color: darkorange;
+}
+
+.home-body div a:hover,
+.home-body div a:active {
+    color: chocolate;
+}
+
+.auth-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20%;
+}
+
+.auth-page h1 {
+    margin: 5%;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+.auth-form button {
+    background-color: #f3b711;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* Add a hover effect for buttons */
+.auth-form button:hover {
+    opacity: 0.8;
+}
+
+.auth-page a:link,
+.auth-page a:visited {
+    color: darkorange;
+}
+
+.auth-page a:hover,
+.auth-page a:active {
+    color: chocolate;
+}
+
 .note {
     background: #fff;
     border-radius: 7px;
